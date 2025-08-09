@@ -63,7 +63,7 @@ A high-performance, real-time 3D fractal visualization engine built with Rust an
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/RayMarcher
+git clone https://github.com/cschladetsch/RayMarcher
 cd RayMarcher
 cargo build --release
 ```
