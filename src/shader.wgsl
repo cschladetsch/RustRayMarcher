@@ -6,7 +6,7 @@ struct Uniforms {
     fractal_iterations: u32,
     fractal_type: u32,
     camera_pos: vec3<f32>,
-    _padding2: f32,
+    color_mode: u32,
 }
 
 @group(0) @binding(0)
@@ -289,6 +289,21 @@ fn get_color_palette(t: f32, steps: f32) -> vec3<f32> {
     return mix(color * 0.3, color, 1.0 - normalized_steps);
 }
 
+fn get_distance_color(distance: f32) -> vec3<f32> {
+    let max_distance = 20.0;
+    let normalized_distance = clamp(distance / max_distance, 0.0, 1.0);
+    
+    let color_near = vec3<f32>(1.0, 0.0, 0.0);    // Red for close objects
+    let color_mid = vec3<f32>(1.0, 1.0, 0.0);     // Yellow for medium distance
+    let color_far = vec3<f32>(0.0, 0.0, 1.0);     // Blue for far objects
+    
+    if (normalized_distance < 0.5) {
+        return mix(color_near, color_mid, normalized_distance * 2.0);
+    } else {
+        return mix(color_mid, color_far, (normalized_distance - 0.5) * 2.0);
+    }
+}
+
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let uv = in.world_position;
@@ -334,7 +349,13 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let lighting = ambient + diffuse1 + diffuse2 + spec1 + spec2;
     
     let distance_from_origin = length(hit_point);
-    let base_color = get_color_palette(distance_from_origin * 0.3, steps);
+    
+    var base_color: vec3<f32>;
+    if (uniforms.color_mode == 1u) {
+        base_color = get_distance_color(depth);
+    } else {
+        base_color = get_color_palette(distance_from_origin * 0.3, steps);
+    }
     
     let ao = 1.0 - (steps / 256.0) * 0.8;
     let fog = exp(-depth * 0.01);

@@ -11,7 +11,7 @@ pub struct Uniforms {
     pub fractal_iterations: u32,
     pub fractal_type: u32,
     pub camera_pos: [f32; 3],
-    pub _padding2: f32,
+    pub color_mode: u32,
 }
 
 impl Uniforms {
@@ -24,7 +24,7 @@ impl Uniforms {
             fractal_iterations: 64,
             fractal_type: 0, // Mandelbulb by default
             camera_pos: [0.0, 0.0, -3.0],
-            _padding2: 0.0,
+            color_mode: 0,
         }
     }
 
@@ -37,6 +37,14 @@ impl Uniforms {
             4 => "Apollonian",
             5 => "Mandelbox",
             99 => "Auto-cycle",
+            _ => "Unknown",
+        }
+    }
+
+    pub fn get_color_mode_name(&self) -> &'static str {
+        match self.color_mode {
+            0 => "Palette",
+            1 => "Distance",
             _ => "Unknown",
         }
     }

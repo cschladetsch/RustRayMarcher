@@ -62,10 +62,11 @@ impl InputHandler {
                         
                         // Toggle FPS display with F key
                         if *keycode == KeyCode::KeyF {
-                            println!("FPS: {:.1} | Frame Time: {:.2}ms | {} | Iterations: {} | Power: {:.1} | Speed: {:.1}", 
+                            println!("FPS: {:.1} | Frame Time: {:.2}ms | {} | {} | Iterations: {} | Power: {:.1} | Speed: {:.1}", 
                                 current_fps,
                                 1000.0 / current_fps.max(0.1),
                                 uniforms.get_fractal_name(),
+                                uniforms.get_color_mode_name(),
                                 uniforms.fractal_iterations,
                                 uniforms.fractal_power,
                                 camera.speed
@@ -239,6 +240,11 @@ impl InputHandler {
         }
         if self.keys_pressed.contains(&KeyCode::Digit0) {
             uniforms.fractal_type = 99; // Auto-cycle
+        }
+        
+        // V key for color mode toggle
+        if self.keys_pressed.contains(&KeyCode::KeyV) {
+            uniforms.color_mode = (uniforms.color_mode + 1) % 2;
         }
     }
 
