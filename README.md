@@ -13,6 +13,11 @@ A high-performance, real-time 3D fractal visualization engine built with Rust an
 - **Mandelbox** - Box-folding fractal variations
 - **Auto-cycling** - Fractals automatically transition over time
 
+### Coloring Modes
+- **Palette Mode** - Dynamic color palettes with time-based transitions
+- **Distance Mode** - Color based on distance from camera (red=close, yellow=medium, blue=far)
+- **V key** - Toggle between coloring modes
+
 ### Interactive Controls
 
 #### Camera Movement
@@ -37,6 +42,7 @@ A high-performance, real-time 3D fractal visualization engine built with Rust an
 - **Z/X** - Change iteration count (8 - 256)
 - **1-6** - Select specific fractal type (1=Mandelbulb, 2=Julia, 3=Menger, 4=Kleinian, 5=Apollonian, 6=Mandelbox)
 - **0** - Auto-cycle mode (automatic fractal transitions)
+- **V** - Toggle coloring mode (Palette/Distance)
 - **F** - Display performance statistics
 
 ### Visual Effects
@@ -95,6 +101,81 @@ For WSL2 users, ensure X11 forwarding is configured:
 ## Technical Details
 
 ### Architecture
+
+```mermaid
+graph TB
+    subgraph "Application Layer"
+        App[RayMarchingApp]
+        Main[main.rs]
+    end
+    
+    subgraph "Core Systems"
+        Input[InputHandler]
+        Camera[Camera]
+        Renderer[Renderer]
+        Uniforms[Uniforms]
+    end
+    
+    subgraph "Rendering Pipeline"
+        Shader[shader.wgsl]
+        Vertex[Vertex Shader]
+        Fragment[Fragment Shader]
+    end
+    
+    subgraph "Fractal Systems"
+        Mandelbulb[Mandelbulb Distance]
+        Julia[Julia Distance]
+        Menger[Menger Sponge]
+        Kleinian[Kleinian Groups]
+        Apollonian[Apollonian Gasket]
+        Mandelbox[Mandelbox]
+    end
+    
+    subgraph "Coloring Systems"
+        Palette[Palette Colors]
+        Distance[Distance Colors]
+    end
+    
+    subgraph "External Dependencies"
+        winit[winit - Windowing]
+        wgpu[wgpu - Graphics API]
+        cgmath[cgmath - Math]
+    end
+    
+    Main --> App
+    App --> Input
+    App --> Camera
+    App --> Renderer
+    App --> Uniforms
+    
+    Input --> Camera
+    Input --> Uniforms
+    
+    Renderer --> Shader
+    Shader --> Vertex
+    Shader --> Fragment
+    
+    Fragment --> Mandelbulb
+    Fragment --> Julia
+    Fragment --> Menger
+    Fragment --> Kleinian
+    Fragment --> Apollonian
+    Fragment --> Mandelbox
+    
+    Fragment --> Palette
+    Fragment --> Distance
+    
+    App --> winit
+    Renderer --> wgpu
+    Camera --> cgmath
+    
+    style App fill:#e1f5fe
+    style Renderer fill:#f3e5f5
+    style Fragment fill:#fff3e0
+    style Palette fill:#e8f5e8
+    style Distance fill:#e8f5e8
+```
+
 - **Rust** - Memory-safe systems programming
 - **wgpu** - Modern WebGPU API for cross-platform GPU access
 - **winit** - Cross-platform windowing and input handling
@@ -231,6 +312,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 #### Fractal Parameters
 - **Q/E** - Decrease/increase fractal power (1.0 - 20.0)
 - **Z/X** - Decrease/increase iteration count (8 - 256)
+- **V** - Toggle coloring mode (Palette/Distance)
 
 #### System
 - **F** - Display performance statistics (FPS, frame time, settings)
